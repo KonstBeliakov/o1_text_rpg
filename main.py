@@ -157,6 +157,7 @@ def main():
         print("7. Unequip Item")
         print("8. Visit Store")
         print("9. Quit Game")
+        print("10. Use Magic Scroll")
 
         choice = input("Enter your choice: ")
 
@@ -180,6 +181,8 @@ def main():
         elif choice == '9':
             print("Thank you for playing! Goodbye.")
             break
+        elif choice == '10':
+            player.use_item()
         else:
             print("Invalid choice. Please select a valid action.")
 

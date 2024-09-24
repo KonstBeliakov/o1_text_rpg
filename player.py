@@ -1,3 +1,6 @@
+from items import *
+
+
 class Player:
     def __init__(self, name):
         self.name = name
@@ -56,27 +59,66 @@ class Player:
             print("-----------------\n")
 
     def use_item(self):
-        consumables = [item for item in self.inventory if isinstance(item, Consumable)]
-        if not consumables:
-            print("You have no consumable items to use.")
+        if not self.inventory:
+            print("You have no items to use.")
             return
-        print("\n--- Consumables ---")
-        for idx, item in enumerate(consumables, 1):
+        print("\n--- Use Item ---")
+        for idx, item in enumerate(self.inventory, 1):
             print(f"{idx}. {item}")
-        print("-------------------")
+        print("----------------")
         try:
-            choice = int(input("Select the number of the consumable you want to use (0 to cancel): "))
+            choice = int(input("Select the number of the item you want to use (0 to cancel): "))
             if choice == 0:
                 return
-            consumable = consumables[choice - 1]
-            if consumable.healing > 0:
-                self.health += consumable.healing
-                if self.health > self.max_health:
-                    self.health = self.max_health
-                print(f"You used {consumable.name} and healed for {consumable.healing} HP.")
-                self.inventory.remove(consumable)
+            selected_item = self.inventory[choice - 1]
+            if isinstance(selected_item, MagicScroll):
+                self.apply_magic_scroll(selected_item)
+            elif isinstance(selected_item, Consumable):
+                if selected_item.healing > 0:
+                    self.health += selected_item.healing
+                    if self.health > self.max_health:
+                        self.health = self.max_health
+                    print(f"You used {selected_item.name} and healed for {selected_item.healing} HP.")
+                    self.inventory.remove(selected_item)
+                else:
+                    print(f"{selected_item.name} has no use.")
             else:
-                print(f"{consumable.name} has no use.")
+                print("Selected item cannot be used.")
+        except (IndexError, ValueError):
+            print("Invalid choice.")
+
+    def apply_magic_scroll(self, scroll):
+        if not self.equipment:
+            print("You have no equipment to enchant.")
+            return
+        print("\n--- Enchant Equipment ---")
+        print(self.equipment.items())
+        equipables = {slot: item for slot, item in self.equipment.items() if item is not None}
+        for idx, (slot, item) in enumerate(equipables.items(), 1):
+            print(f"{idx}. {item} (Slot: {slot})")
+        print("---------------------------")
+        try:
+            choice = int(input("Select the equipment to enchant (0 to cancel): "))
+            if choice == 0:
+                return
+            slot_selected = list(equipables.keys())[choice - 1]
+            equipment = equipables[slot_selected]
+            if scroll.scroll_type == "Attack" and equipment.slot != "Weapon":
+                print("Attack Scroll can only be used on Weapon slots.")
+                return
+            if scroll.scroll_type == "Defense" and equipment.slot != "Armor":
+                print("Defense Scroll can only be used on Armor slots.")
+                return
+            # Apply enchantment
+            if scroll.scroll_type == "Attack":
+                equipment.attack_bonus += scroll.enchant_bonus
+                self.attack += scroll.enchant_bonus
+            elif scroll.scroll_type == "Defense":
+                equipment.defense_bonus += scroll.enchant_bonus
+                self.defense += scroll.enchant_bonus
+            print(f"Enchanted {equipment.name} with {scroll.name}.")
+            # Remove the scroll from inventory
+            self.inventory.remove(scroll)
         except (IndexError, ValueError):
             print("Invalid choice.")
 
