@@ -138,6 +138,17 @@ def combat(player, monsters):
     print("=== Combat End ===\n")
 
 
+def add_monster_health_bar():
+    def display_health_bar(self):
+        bar_length = 20
+        health_ratio = self.health / self.max_health
+        filled_length = int(bar_length * health_ratio)
+        bar = '█' * filled_length + '-' * (bar_length - filled_length)
+        print(f"{self.name}: |{bar}| {self.health}/{self.max_health} HP")
+
+    Monster.display_health_bar = display_health_bar
+
+
 # Main game loop
 def main():
     store = Store()
@@ -205,3 +216,4 @@ def add_monster_health_bar():
 if __name__ == "__main__":
     add_monster_health_bar()
     main()
+

@@ -7,3 +7,4 @@ def format_coins(coin_dict):
     if coin_dict.get("copper", 0) > 0:
         parts.append(f"{coin_dict['copper']}C")
     return ' '.join(parts) if parts else "Free"
+

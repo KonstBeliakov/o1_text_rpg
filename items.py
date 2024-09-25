@@ -3,7 +3,7 @@ class Item:
         self.name = name
         self.description = description
 
-    def __str__(self):
+    def __repr__(self):
         return f"{self.name}: {self.description}"
 
 
@@ -13,6 +13,8 @@ class Consumable(Item):
         self.healing = healing
         self.cost = cost  # Cost in coins
 
+    def __repr__(self):
+        return f"{self.name} (heals {self.healing} HP): {self.description}"
 
 class Equipment(Item):
     def __init__(self, name, description, slot, attack_bonus=0, defense_bonus=0, cost={"gold":0, "silver":0, "copper":0}):
@@ -22,7 +24,7 @@ class Equipment(Item):
         self.defense_bonus = defense_bonus
         self.cost = cost  # Cost in coins
 
-    def __str__(self):
+    def __repr__(self):
         bonuses = []
         if self.attack_bonus:
             bonuses.append(f"Attack +{self.attack_bonus}")

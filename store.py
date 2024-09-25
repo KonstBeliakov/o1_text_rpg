@@ -37,6 +37,26 @@ class Store:
         print("---------------------\n")
 
     def buy_item(self, player):
+        while True:
+            print("\n--- Store Menu ---")
+            print("1. Buy Items")
+            print("2. Exchange Coins")
+            print("3. Exit Store")
+            choice = input("Enter your choice: ")
+
+            if choice == '1':
+                self.process_purchase(player)
+            elif choice == '2':
+                self.exchange_coins(player)
+            elif choice == '3':
+                print("Exiting the store.")
+                break
+            else:
+                print("Invalid choice. Please select a valid option.")
+
+    def process_purchase(self, player):
+        print("\nYour current coins:")
+        player.display_coins()
         self.show_items()
         try:
             choice = int(input("Select the number of the item you want to buy (0 to cancel): "))
@@ -60,4 +80,92 @@ class Store:
                 print("Invalid selection.")
         except ValueError:
             print("Invalid input.")
+
+    def exchange_coins(self, player):
+        while True:
+            print("\n--- Exchange Coins ---")
+            print("1. Buy Silver for Copper (105 Copper = 1 Silver)")
+            print("2. Sell Silver for Copper (1 Silver = 95 Copper)")
+            print("3. Buy Gold for Silver (105 Silver = 1 Gold)")
+            print("4. Sell Gold for Silver (1 Gold = 95 Silver)")
+            print("5. Cancel")
+            choice = input("Enter your choice: ")
+
+            if choice == '1':
+                self.buy_silver(player)
+            elif choice == '2':
+                self.sell_silver(player)
+            elif choice == '3':
+                self.buy_gold(player)
+            elif choice == '4':
+                self.sell_gold(player)
+            elif choice == '5':
+                print("Cancelling coin exchange.")
+                break
+            else:
+                print("Invalid choice. Please select a valid option.")
+
+    def buy_silver(self, player):
+        try:
+            amount = int(input("Enter the number of Silver coins you want to buy: "))
+            if amount <= 0:
+                print("Amount must be positive.")
+                return
+            total_cost = {"gold":0, "silver":0, "copper":105 * amount}
+            print(f"Total cost: {format_coins(total_cost)}")
+            if player.spend_coins(total_cost):
+                player.coins["silver"] += amount
+                print(f"Successfully bought {amount} Silver.")
+            else:
+                print("Insufficient Copper to complete the purchase.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+
+    def sell_silver(self, player):
+        try:
+            amount = int(input("Enter the number of Silver coins you want to sell: "))
+            if amount <= 0:
+                print("Amount must be positive.")
+                return
+            if player.coins["silver"] < amount:
+                print("You don't have enough Silver to sell.")
+                return
+            total_return = {"gold":0, "silver":0, "copper":95 * amount}
+            player.coins["silver"] -= amount
+            player.add_coins(total_return)
+            print(f"Successfully sold {amount} Silver for {95 * amount} Copper.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+
+    def buy_gold(self, player):
+        try:
+            amount = int(input("Enter the number of Gold coins you want to buy: "))
+            if amount <= 0:
+                print("Amount must be positive.")
+                return
+            total_cost = {"gold":0, "silver":105 * amount, "copper":0}
+            print(f"Total cost: {format_coins(total_cost)}")
+            if player.spend_coins(total_cost):
+                player.coins["gold"] += amount
+                print(f"Successfully bought {amount} Gold.")
+            else:
+                print("Insufficient Silver to complete the purchase.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+
+    def sell_gold(self, player):
+        try:
+            amount = int(input("Enter the number of Gold coins you want to sell: "))
+            if amount <= 0:
+                print("Amount must be positive.")
+                return
+            if player.coins["gold"] < amount:
+                print("You don't have enough Gold to sell.")
+                return
+            total_return = {"gold":0, "silver":95 * amount, "copper":0}
+            player.coins["gold"] -= amount
+            player.add_coins(total_return)
+            print(f"Successfully sold {amount} Gold for {95 * amount} Silver.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
 

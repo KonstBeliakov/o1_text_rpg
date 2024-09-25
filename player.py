@@ -175,7 +175,7 @@ class Player:
         print("\n--- Equipped Items ---")
         for slot, item in self.equipment.items():
             if item:
-                print(f"{slot}: {item.name}")
+                print(f"{slot}: {item}")
             else:
                 print(f"{slot}: None")
         print("----------------------\n")
@@ -225,23 +225,9 @@ class Player:
         print(f"Coins: {gold} Gold, {silver} Silver, {copper} Copper")
 
     def add_coins(self, coin_dict):
-        # Add coins, handling the conversion if necessary
         self.coins["copper"] += coin_dict.get("copper", 0)
         self.coins["silver"] += coin_dict.get("silver", 0)
         self.coins["gold"] += coin_dict.get("gold", 0)
-        # Convert excess copper to silver and silver to gold
-        self.convert_coins()
-
-    def convert_coins(self):
-        # 100 copper = 1 silver, 100 silver = 1 gold
-        # Convert copper to silver
-        if self.coins["copper"] >= 100:
-            self.coins["silver"] += self.coins["copper"] // 100
-            self.coins["copper"] = self.coins["copper"] % 100
-        # Convert silver to gold
-        if self.coins["silver"] >= 100:
-            self.coins["gold"] += self.coins["silver"] // 100
-            self.coins["silver"] = self.coins["silver"] % 100
 
     def spend_coins(self, cost):
         """
@@ -276,3 +262,4 @@ class Player:
             return False
         self.coins["copper"] -= remaining
         return True
+
